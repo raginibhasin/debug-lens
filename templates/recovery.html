@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account recovery | DebugLens</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-page">
+<main class="auth-shell recovery-shell">
+  <section class="auth-story recovery-story">
+    <a class="brand" href="/login"><span class="logo">DL</span><span>DebugLens</span></a>
+    <div class="auth-story-copy">
+      <p class="eyebrow">ACCOUNT RECOVERY</p>
+      <h2>Get back into<br>your workspace.</h2>
+      <p>For security, password resets are run locally by the workspace owner. DebugLens does not email a reset link or expose account recovery over the public web.</p>
+    </div>
+    <p class="auth-story-foot"><span></span>Only someone with local server access can reset an account.</p>
+  </section>
+  <section class="auth-panel recovery-panel">
+    <div class="auth-panel-heading">
+      <p class="eyebrow">SELF-HOSTED RECOVERY</p>
+      <h1>Reset your password.</h1>
+      <p>Ask the workspace owner to run this from the DebugLens project folder.</p>
+    </div>
+    <pre class="recovery-command"><code>python -m flask --app app reset-account-password</code></pre>
+    <p class="recovery-note">The owner enters the account email and sets a new password of at least 12 characters. Password entry is hidden in the terminal. Then return here and sign in with the new password.</p>
+    <a class="primary auth-submit recovery-back" href="/login">Back to sign in <span aria-hidden="true">&#8594;</span></a>
+  </section>
+</main>
+</body>
+</html>

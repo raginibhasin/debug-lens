@@ -1,0 +1,28 @@
+services:
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      DEBUGLENS_SECRET_KEY: ${DEBUGLENS_SECRET_KEY:?Set DEBUGLENS_SECRET_KEY before starting}
+      DEBUGLENS_DB_PATH: /data/debuglens.db
+      DEBUGLENS_GIT_ALLOWED_ROOTS: /workspace
+      DEBUGLENS_RATELIMIT_STORAGE_URI: redis://redis:6379/0
+      DEBUGLENS_AI_ENABLED: ${DEBUGLENS_AI_ENABLED:-false}
+      DEBUGLENS_OLLAMA_BASE_URL: ${DEBUGLENS_OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      DEBUGLENS_OLLAMA_EMBED_MODEL: ${DEBUGLENS_OLLAMA_EMBED_MODEL:-nomic-embed-text}
+      DEBUGLENS_OLLAMA_CHAT_MODEL: ${DEBUGLENS_OLLAMA_CHAT_MODEL:-qwen2.5:3b}
+    volumes:
+      - debuglens-data:/data
+      - "${DEBUGLENS_GIT_ROOT:?Set DEBUGLENS_GIT_ROOT to an allowed host folder}:/workspace:ro"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    restart: unless-stopped
+
+volumes:
+  debuglens-data:

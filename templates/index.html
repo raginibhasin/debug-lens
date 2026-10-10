@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token }}">
+<title>DebugLens</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/"><span class="logo">DL</span><span>DebugLens</span></a>
+  <nav id="nav">
+    <button data-tab="dashboard" class="active">Dashboard</button>
+    <button data-tab="error">Error Analysis</button>
+    <button data-tab="code">Code &amp; Structure</button>
+    <button data-tab="security">Security</button>
+    <button data-tab="logs">Log Analysis</button>
+    <button data-tab="git">Git Changes</button>
+    <button data-tab="history">History</button>
+  </nav>
+  <div class="account-actions">
+    <span id="account-email" class="account-email"></span>
+    <button id="invite-user" hidden>Invite member</button>
+    <button id="logout">Sign out</button>
+  </div>
+</header>
+<output id="account-message" class="account-message" aria-live="polite"></output>
+
+<main>
+  <section id="tab-dashboard" class="tab active">
+    <section id="guided-tour" class="guided-tour" hidden aria-labelledby="guide-title">
+      <div class="guide-heading">
+        <div><p class="eyebrow">SAMPLE PROJECT</p><h2 id="guide-title">Meet the demo app</h2><p id="guide-description" class="muted">A small Flask project with a few intentional mistakes for learning how code and security reviews work.</p></div>
+        <button id="guide-close">Back to dashboard</button>
+      </div>
+      <div class="sample-workbench">
+        <aside class="sample-explorer" aria-label="Sample project files">
+          <p class="sample-pane-label">PROJECT FILES</p>
+          <div id="sample-file-list" role="tablist" aria-label="Choose a sample project file"></div>
+          <p class="sample-safety">Read-only preview. Nothing in this project is executed.</p>
+        </aside>
+        <section class="sample-editor" aria-label="Sample source preview">
+          <div class="sample-editor-bar"><span class="sample-file-mark"></span><span id="sample-selected-name">app.py</span><span class="sample-readonly">READ ONLY</span></div>
+          <div class="sample-file-about"><h3 id="sample-file-title">app.py</h3><p id="sample-file-description"></p></div>
+          <pre class="sample-source"><code id="sample-source"></code></pre>
+          <div class="sample-run-row"><div><button class="primary" id="guided-analyze">Analyze sample</button><p>Runs code and security checks only; it does not run the Flask app.</p></div><span id="guided-status" class="guided-status" aria-live="polite"></span></div>
+        </section>
+      </div>
+      <section id="guided-results" class="guided-results" hidden aria-live="polite"></section>
+    </section>
+    <div class="welcome">
+      <p class="eyebrow">YOUR PROJECT, IN FOCUS</p>
+      <h1>A clearer view of what is going on.</h1>
+      <p class="welcome-copy">DebugLens brings errors, code quality, security, logs, and Git changes into one calm workspace. Choose an analysis to get started, then return here to pick up where you left off.</p>
+      <div class="welcome-actions">
+        <button class="primary welcome-action" data-tab="error">Start an analysis <span aria-hidden="true">&#8594;</span></button>
+        <button class="welcome-action sample-project-action" id="guided-start">Browse sample project</button>
+      </div>
+    </div>
+    <div class="cards" id="stats"></div>
+    <div class="section-heading"><div><p class="eyebrow">ANALYSIS TOOLKIT</p><h2>What would you like to inspect?</h2></div></div>
+    <div class="feature-grid">
+      <button class="feature-card" data-tab="error"><span class="feature-number">01 / DIAGNOSE</span><h3>Error analysis</h3><p>Make stack traces and compiler messages easier to understand. See verified details, likely causes, and practical next steps.</p><span class="feature-link">Open workspace</span></button>
+      <button class="feature-card" data-tab="code"><span class="feature-number">02 / UNDERSTAND</span><h3>Code &amp; structure</h3><p>Map files, imports, functions, and classes across a project. Surface complexity and quality issues at a glance.</p><span class="feature-link">Open workspace</span></button>
+      <button class="feature-card" data-tab="security"><span class="feature-number">03 / PROTECT</span><h3>Security &amp; dependencies</h3><p>Review source and configuration for common security risks. Check dependency manifests for known advisories.</p><span class="feature-link">Open workspace</span></button>
+      <button class="feature-card" data-tab="logs"><span class="feature-number">04 / FIND SIGNAL</span><h3>Log analysis</h3><p>Group repeated errors, spot bursts, and pick out noteworthy events. Turn long logs into a more useful summary.</p><span class="feature-link">Open workspace</span></button>
+      <button class="feature-card" data-tab="git"><span class="feature-number">05 / TRACE CHANGE</span><h3>Git changes</h3><p>Compare commits and recent file changes, then connect reported failures with likely commits and line history.</p><span class="feature-link">Open workspace</span></button>
+      <button class="feature-card" data-tab="history"><span class="feature-number">06 / PICK UP</span><h3>Analysis history</h3><p>Revisit previous results, reopen a report, or clear analyses you no longer need. Your work stays close at hand.</p><span class="feature-link">Open history</span></button>
+    </div>
+    <div class="dashboard-columns">
+      <section><h2>Recent analyses</h2><div id="recent" class="list"></div></section>
+      <section><h2>Recurring errors</h2><div id="recurring" class="list"></div></section>
+    </div>
+  </section>
+
+  <section id="tab-error" class="tab">
+    <h1>Error Analysis</h1>
+    <p class="muted">Paste a stack trace or compiler error (Python, C#, Java, JavaScript). Optionally attach source files so the failing line can be shown.</p>
+    <textarea id="err-text" rows="9" placeholder="Paste error / traceback here..."></textarea>
+    <div class="row">
+      <label class="file">Source files (optional) <input type="file" id="err-files" multiple></label>
+      <button class="primary" id="err-run">Analyze error</button>
+      <button id="err-sample">Load sample</button>
+    </div>
+    <div id="err-out"></div>
+  </section>
+
+  <section id="tab-code" class="tab">
+    <h1>Code &amp; Project Structure</h1>
+    <p class="muted">Upload source files or a .zip. Python gets full AST analysis; JS/TS, Java and C# get basic analysis.</p>
+    <div class="row">
+      <label class="file">Files / .zip <input type="file" id="code-files" multiple></label>
+      <label class="file">Or a folder <input type="file" id="code-folder" webkitdirectory multiple></label>
+      <button class="primary" id="code-run">Analyze code</button>
+    </div>
+    <div id="code-out"></div>
+  </section>
+
+  <section id="tab-security" class="tab">
+    <h1>Security &amp; Dependencies</h1>
+    <p class="muted">Scans code, config, Dockerfiles, compose files, Terraform/AWS JSON, requirements.txt and package.json. Defensive analysis only.</p>
+    <div class="row">
+      <label class="file">Files / .zip <input type="file" id="sec-files" multiple></label>
+      <label class="file">Or a folder <input type="file" id="sec-folder" webkitdirectory multiple></label>
+      <label class="chk"><input type="checkbox" id="sec-online"> Online dependency check (OSV.dev)</label>
+      <button class="primary" id="sec-run">Run security scan</button>
+    </div>
+    <div id="sec-out"></div>
+  </section>
+
+  <section id="tab-logs" class="tab">
+    <h1>Log Analysis</h1>
+    <textarea id="log-text" rows="8" placeholder="Paste log text, or upload a file below..."></textarea>
+    <div class="row">
+      <label class="file">Log file <input type="file" id="log-file"></label>
+      <button class="primary" id="log-run">Analyze logs</button>
+    </div>
+    <div id="log-out"></div>
+  </section>
+
+  <section id="tab-git" class="tab">
+    <h1>Git &amp; Change Analysis</h1>
+    <p class="muted">Analyze a local repository or a public GitHub repository URL. Remote sources are shallow-cloned to temporary storage; project code is never executed.</p>
+    <label for="git-path">Local repository folder</label>
+    <input id="git-path" placeholder="C:\path\to\your\repo">
+    <label for="git-url">Or public GitHub repository URL</label>
+    <input id="git-url" type="url" placeholder="https://github.com/owner/repository">
+    <div class="row">
+      <input id="git-base" placeholder="Base (optional, e.g. v1.0 or abc123)">
+      <input id="git-head" placeholder="Head (default HEAD)">
+    </div>
+    <textarea id="git-err" rows="5" placeholder="Error / stack trace (optional)"></textarea>
+    <div class="row"><button class="primary" id="git-run">Analyze repository</button></div>
+    <div id="git-out"></div>
+  </section>
+
+  <section id="tab-history" class="tab">
+    <h1>History</h1>
+    <section class="ai-tools" aria-labelledby="ai-tools-title">
+      <div class="ai-tools-heading"><div><p class="eyebrow">OPTIONAL LOCAL MODEL</p><h2 id="ai-tools-title">Search &amp; understand</h2></div><span id="ai-status" class="ai-status" aria-live="polite">Checking local model...</span></div>
+      <form id="ai-search-form" class="ai-search-form">
+        <input id="ai-search-query" placeholder="Search by meaning, e.g. errors caused by empty input" maxlength="500" aria-label="Semantic search query" required>
+        <button class="primary" id="ai-search-button" type="submit" disabled>Search analyses</button>
+        <button id="ai-cluster-button" type="button" disabled>Group recurring errors</button>
+      </form>
+      <div id="ai-search-results" class="list"></div>
+      <div id="ai-cluster-results" class="ai-cluster-results"></div>
+    </section>
+    <div id="hist-list" class="list"></div>
+    <div id="hist-view"></div>
+  </section>
+</main>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

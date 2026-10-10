@@ -1,0 +1,4 @@
+Flask>=3.0,<4.0
+Flask-Limiter[redis]>=3.8,<5.0
+reportlab>=4,<5
+gunicorn>=22,<24

@@ -1,0 +1,8 @@
+2026-10-10 09:01:12 INFO  Server started on port 8000
+2026-10-10 09:02:03 ERROR Database connection refused: host=10.0.0.5 port=5432
+2026-10-10 09:02:04 ERROR Database connection refused: host=10.0.0.5 port=5432
+2026-10-10 09:02:05 WARNING Retry 3 of 5 for request 8812
+2026-10-10 09:02:09 ERROR Database connection refused: host=10.0.0.5 port=5432
+2026-10-10 09:05:44 ERROR Unauthorized access attempt for user 'admin' from 203.0.113.9
+2026-10-10 09:07:10 ERROR Timeout while calling payment service after 30s
+2026-10-10 09:07:11 INFO Request 8813 completed in 120 ms

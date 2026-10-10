@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "C:\projects\shop\app.py", line 42, in checkout
+    avg = total / len(items)
+ZeroDivisionError: division by zero

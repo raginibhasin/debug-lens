@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token }}">
+<title>DebugLens | A clearer view of your code</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='welcome.js') }}" defer></script>
+</head>
+<body class="intro-page">
+<header class="intro-topbar">
+  <a class="brand" href="/"><span class="logo">DL</span><span>DebugLens</span></a>
+  <div class="intro-account"><span>{{ user.email }}</span><button id="logout">Sign out</button></div>
+</header>
+<main class="intro-main">
+  <section class="intro-hero">
+    <div class="intro-copy">
+      <p class="eyebrow">A CALMER WAY TO DEBUG</p>
+      <h1>Find clarity in the complicated parts.</h1>
+      <p class="intro-description">DebugLens brings errors, project structure, security findings, logs, and Git changes into one thoughtful workspace, so you can understand what happened and decide what to do next.</p>
+      <a class="primary intro-action" href="/workspace">Open workspace <span aria-hidden="true">&#8594;</span></a>
+      <p class="intro-caption">Your tools and saved analyses are waiting inside.</p>
+    </div>
+    <div class="intro-preview" aria-label="Illustrative sample error analysis">
+      <div class="preview-topline"><span class="preview-indicator"></span> SAMPLE DIAGNOSTIC <span class="preview-language">PYTHON</span></div>
+      <p class="preview-error">ZeroDivisionError</p>
+      <p class="preview-message">division by zero</p>
+      <div class="preview-rule"></div>
+      <p class="preview-label">WHAT TO CHECK</p>
+      <p class="preview-note">The divisor may be zero when the input collection is empty. Check the value before dividing.</p>
+      <div class="preview-footer"><span>Evidence-led analysis</span><span>Suggestions, not guarantees</span></div>
+    </div>
+  </section>
+  <footer class="intro-footer"><span>Diagnose the issue.</span><span>Understand its context.</span><span>Choose your next step.</span></footer>
+</main>
+</body>
+</html>

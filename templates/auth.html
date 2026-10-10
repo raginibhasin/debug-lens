@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ "Create account" if mode == "register" else "Sign in" }} | DebugLens</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='auth.js') }}" defer></script>
+</head>
+<body class="auth-page" data-mode="{{ mode }}">
+<main class="auth-shell">
+  <section class="auth-story">
+    <a class="brand" href="/"><span class="logo">DL</span><span>DebugLens</span></a>
+    <div class="auth-story-copy">
+      <p class="eyebrow">A CLEARER VIEW OF YOUR CODE</p>
+      <h2>Find the signal.<br>Understand the why.</h2>
+      <p>Bring errors, project structure, security, logs, and code changes into one calm place to investigate.</p>
+    </div>
+    <div class="auth-preview" aria-label="Example DebugLens analysis">
+      <div class="auth-preview-head"><span class="auth-preview-dot"></span><span>RECENT FINDING</span><span class="auth-preview-tag">SECURITY</span></div>
+      <p class="auth-preview-title">Possible hard-coded credential</p>
+      <p class="auth-preview-path">config.py <span>line 18</span></p>
+      <div class="auth-preview-code"><span>SECRET_KEY =</span> <b>"••••••••••••"</b></div>
+      <p class="auth-preview-note">Evidence first. Suggestions for what to check next.</p>
+    </div>
+    <p class="auth-story-foot"><span></span>Analysis reads source as text; it does not execute your code.</p>
+  </section>
+  <section class="auth-panel">
+    <div class="auth-panel-heading">
+      <p class="eyebrow">{{ "WORKSPACE ACCESS" if mode == "login" else "INVITATION REQUIRED" }}</p>
+      <h1>{{ "Welcome back." if mode == "login" else "Join your workspace." }}</h1>
+      <p>{{ "Sign in to pick up where you left off." if mode == "login" else "Create an account with the invitation from your workspace owner." }}</p>
+    </div>
+    <section id="login-panel" {% if mode == "register" %}hidden{% endif %}>
+      <form id="login-form">
+        <label for="login-email">Email address</label>
+        <input id="login-email" type="email" autocomplete="username" placeholder="you@example.com" required>
+        <div class="auth-label-row"><label for="login-password">Password</label><a href="/recover">Forgot password?</a></div>
+        <div class="password-field">
+          <input id="login-password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+          <button class="password-toggle" type="button" data-toggle-password="login-password" aria-label="Show password" aria-pressed="false">
+            <svg class="eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="eye-closed" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="m3 3 18 18M10.6 5.2A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3.1 3.8M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7a9 9 0 0 0 3.2-.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+          </button>
+        </div>
+        <button class="primary auth-submit" type="submit">Sign in <span aria-hidden="true">&#8594;</span></button>
+      </form>
+      <p class="auth-error" id="login-error" role="alert"></p>
+      <p class="auth-switch">Have an invitation? <a href="/register">Create an account</a></p>
+    </section>
+    <section id="register-panel" {% if mode != "register" %}hidden{% endif %}>
+      <form id="register-form">
+        <label for="register-invite">Invitation token</label>
+        <input id="register-invite" autocomplete="off" placeholder="Paste your invitation token" required>
+        <label for="register-email">Email address</label>
+        <input id="register-email" type="email" autocomplete="email" placeholder="you@example.com" required>
+        <label for="register-password">Password</label>
+        <div class="password-field">
+          <input id="register-password" type="password" autocomplete="new-password" placeholder="At least 12 characters" minlength="12" required>
+          <button class="password-toggle" type="button" data-toggle-password="register-password" aria-label="Show password" aria-pressed="false">
+            <svg class="eye-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="eye-closed" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="m3 3 18 18M10.6 5.2A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3.1 3.8M6.2 6.2C3.5 8.1 2 12 2 12s3.6 7 10 7a9 9 0 0 0 3.2-.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+          </button>
+        </div>
+        <button class="primary auth-submit" type="submit">Create account <span aria-hidden="true">&#8594;</span></button>
+      </form>
+      <p class="auth-error" id="register-error" role="alert"></p>
+      <p class="auth-switch">Already have an account? <a href="/login">Sign in</a></p>
+    </section>
+  </section>
+</main>
+</body>
+</html>
